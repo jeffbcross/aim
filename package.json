@@ -1,0 +1,29 @@
+{
+  "name": "aim",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc; ./node_modules/.bin/browserify dist/app.js -o dist/app-bundle.js",
+    "serve": "./node_modules/.bin/http-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeffbcross/aim.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeffbcross/aim/issues"
+  },
+  "homepage": "https://github.com/jeffbcross/aim#readme",
+  "devDependencies": {
+    "browserify": "^11.2.0",
+    "typescript": "^1.6.2"
+  },
+  "dependencies": {
+    "angular2": "^2.0.0-alpha.39",
+    "http-server": "^0.8.5"
+  }
+}
