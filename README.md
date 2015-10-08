@@ -6,4 +6,4 @@ $ npm run build
 $ npm run serve
 ```
 
-Then open localhost:8080 in browser.
+Then open your favorite browser to [localhost:9000](http://localhost:9000).
