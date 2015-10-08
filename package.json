@@ -25,5 +25,6 @@
   "dependencies": {
     "angular2": "^2.0.0-alpha.39",
     "pushstate-server": "^1.6.0",
+    "reflect-metadata": "^0.1.2"
   }
 }
