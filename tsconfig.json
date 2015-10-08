@@ -5,7 +5,7 @@
         "noImplicitAny": true,
         "outDir": "dist",
         "rootDir": "src",
-        "sourceMap": true,
+        "sourceMap": false,
         "experimentalDecorators": true
     },
     "exclude": [

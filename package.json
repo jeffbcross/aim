@@ -12,8 +12,8 @@
     "type": "git",
     "url": "git+https://github.com/jeffbcross/aim.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "jeffbcross, robwormald",
+  "license": "Apache 2",
   "bugs": {
     "url": "https://github.com/jeffbcross/aim/issues"
   },
