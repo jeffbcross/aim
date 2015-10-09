@@ -1,18 +1,23 @@
 ///<reference path="../../../typings/tsd.d.ts"/>
-import {Component, ElementRef, View, Query, QueryList} from 'angular2/angular2';
+import {AfterViewInit, Component, ContentChild, ElementRef, View, ViewChild, Query, QueryList} from 'angular2/angular2';
 
 @Component({
   selector: 'login'
 })
 @View({
-  template: '<button #loginbtn (click)="login()">login</button>'
+  template: `<input #loginbtn (click)="login()">`
 })
-export class LoginCmp {
-  loginBtn:ElementRef;
-  constructor(@Query('loginbtn') loginBtn:QueryList<ElementRef>) {;
-    console.log('btn', loginBtn);
+export class LoginCmp implements AfterViewInit {
+  @ViewChild('loginbtn') loginBtn:ElementRef;
+  constructor() {;
+    console.log('constructor');
   }
-  login() {
 
+  afterViewInit () {
+    console.log('btn', this.loginBtn);
+  }
+
+  login() {
+    console.log('btn', this.loginBtn);
   }
 }
