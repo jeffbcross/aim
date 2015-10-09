@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc; ./node_modules/.bin/browserify dist/app.js -o dist/app-bundle.js",
-    "serve": "./node_modules/.bin/pushstate-server ."
+    "serve": "node server"
   },
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "angular2": "^2.0.0-alpha.39",
-    "pushstate-server": "^1.6.0",
+    "express": "^4.13.3",
     "reflect-metadata": "^0.1.2"
   }
 }
