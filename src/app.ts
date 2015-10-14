@@ -1,6 +1,7 @@
 declare var require:(s:string)=>any;
-require('reflect-metadata');
 
+require('reflect-metadata');
+import 'zone.js';
 import {bind, bootstrap, Component, View} from 'angular2/angular2';
 import {LoginCmp} from './components/login/login';
 
