@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "serve": "./node_modules/.bin/webpack-dev-server"
+    "serve": "./node_modules/.bin/webpack-dev-server",
+    "build_server": "tsc server/chat_server.ts -m commonjs --outDir dist || true",
+    "start_server": "npm run build_server && node dist/chat_server"
   },
   "repository": {
     "type": "git",
@@ -30,6 +32,8 @@
   "dependencies": {
     "@reactivex/rxjs": "^5.0.0-alpha.2",
     "angular2": "^2.0.0-alpha.42",
-    "reflect-metadata": "^0.1.2"
+    "reflect-metadata": "^0.1.2",
+    "zone.js": "^0.5.8",
+    "ws": "^0.8.0"
   }
 }
