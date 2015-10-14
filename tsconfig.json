@@ -2,9 +2,9 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es5",
-        "noImplicitAny": true,
+        "noImplicitAny": false,
         "outDir": "dist",
-        "rootDir": "src",
+        "rootDir": ".",
         "sourceMap": false,
         "experimentalDecorators": true
     },

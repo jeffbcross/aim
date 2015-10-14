@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc; ./node_modules/.bin/browserify dist/app.js -o dist/app-bundle.js",
-    "serve": "node server"
+    "serve": "./node_modules/.bin/webpack-dev-server"
   },
   "repository": {
     "type": "git",
@@ -19,12 +17,19 @@
   },
   "homepage": "https://github.com/jeffbcross/aim#readme",
   "devDependencies": {
-    "browserify": "^11.2.0",
-    "typescript": "^1.6.2"
+    "css-loader": "^0.19.0",
+    "node-sass": "^3.3.3",
+    "sass-loader": "^3.0.0",
+    "style-loader": "^0.12.4",
+    "ts-loader": "^0.5.6",
+    "typescript": "^1.6.2",
+    "webpack": "^1.12.2",
+    "webpack-dev-server": "^1.12.0",
+    "webpack-livereload-plugin": "^0.4.0"
   },
   "dependencies": {
+    "@reactivex/rxjs": "^5.0.0-alpha.2",
     "angular2": "^2.0.0-alpha.39",
-    "express": "^4.13.3",
     "reflect-metadata": "^0.1.2"
   }
 }
