@@ -24,7 +24,7 @@ const createRxServer = (options) => {
   });
 }
 
-const server = createRxServer({port: 8080});
+const server = createRxServer({port: 8081});
 const connections = server.map(createRxSocket);
 
 let messageEvents$ = connections$.flatMap(connection => {
