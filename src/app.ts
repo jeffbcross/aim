@@ -29,34 +29,59 @@ var tickerService = new TickerService('ws://localhost:8081');
     <h2>Status: {{tickerService.connectionState | rx}}</h2>
     <typeahead (selected)="onSelect($event)"></typeahead>
     <li *ng-for="#ticker of tickers">
-    <button (click)="removeTicker(ticker.symbol)"> x </button>
-      {{ticker.symbol}}: {{ (ticker.ticker | rx)?.price }}
-      
-    
+      <button (click)="removeTicker(ticker.symbol)"> x </button>
+      {{ticker.symbol}}: {{(ticker.prices | rx)}}
+      <div>{{ (ticker.recentTicks | rx) }}</div>
     </li>
   `,
   directives: [TypeAhead, CORE_DIRECTIVES],
   pipes: [RxPipe]
 })
 class AimApp {
-  tickers = [];
+  tickers: Ticker[] = [];
+
   tickerService = tickerService;
+
   constructor() {
     //tickerService.getTicker('acg').subscribe(val => console.log('ticker update', val));
   }
+
   onSelect({symbol}){
     const tickers = this.tickers;
     if(tickers.find(x => x.symbol === symbol)) {
       return;
     }
-    tickers.push({ symbol, ticker: tickerService.getTicker(symbol) });
+
+    const ticks = tickerService.getTicker(symbol);
+    tickers.push(new Ticker(symbol, ticks));
   }
+
   removeTicker(symbol){
     const tickers = this.tickers;
     const index = tickers.findIndex(x => x.symbol === symbol);
     if(index !== -1) {
       tickers.splice(index, 1);
     }
+  }
+}
+
+class Ticker {
+  constructor(public symbol: string, public ticks: Observable<number>) {
+
+  }
+
+  get prices() {
+    return this.ticks.map(x => x.price.toFixed(2)).do(console.log.bind(console));
+  }
+
+  get recentTicks() {
+    return this.ticks.scan((acc, tick) => {
+      const result = acc.concat([tick]);
+      while(result.length > 40) {
+        result.shift();
+      }
+      return result;
+    }, []);
   }
 }
 

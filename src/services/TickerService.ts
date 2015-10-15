@@ -29,7 +29,7 @@ export class TickerService {
     socket.willOpen = () => {
       connectionState.next(ConnectionStates.CONNECTING);
     }
-    
+
     socket.didClose = () => {
       connectionState.next(ConnectionStates.CLOSED);
     }
@@ -57,6 +57,7 @@ export class TickerService {
       } else {
         return Observable.fromEvent(window, 'online').take(1);
       }
-    }));
+    }))
+    .share();
   }
 }
