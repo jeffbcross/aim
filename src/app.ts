@@ -8,10 +8,6 @@ import {
   Component,
   View
 } from 'angular2/angular2';
-import * as Firebase from 'firebase';
-import {LoginCmp} from './components/login/login';
-import {FIREBASE_URL, FirebaseRef} from './config';
-import {AuthService} from './services/auth-service/auth-service';
 
 // Not used yet
 var styles = require("!css!sass!./app.scss");
@@ -21,9 +17,9 @@ var styles = require("!css!sass!./app.scss");
 })
 @View({
   template: `
-    <login></login>
+    <h1>Angular Investment Manager</h1>
   `,
-  directives: [LoginCmp]
+  directives: []
 })
 class AimApp {
   constructor() {
@@ -32,6 +28,4 @@ class AimApp {
 }
 
 bootstrap(AimApp, [
-  provide(FirebaseRef, {useValue: new Firebase(FIREBASE_URL)}),
-  provide(AuthService, {useClass: AuthService})
 ]);
