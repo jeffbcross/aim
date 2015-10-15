@@ -50,9 +50,14 @@ const createRxSocket = (connection) => {
   let messages = Observable.fromEvent(connection, 'message', (message) => JSON.parse(message));
   let messageObserver:any = {
     next(message){
-      connection.send(message);
-    }
+      if(connection.readyState === 1){
+        connection.send(JSON.stringify(message));        
+      }
+     }
   }
+  connection.on('close', () => {
+    connection.streams && connection.streams.forEach(s => s.unsubscribe());
+  })
   return Subject.create(messages, messageObserver);
 }
 
@@ -65,7 +70,7 @@ const createRxServer = (options) => {
     return () => {
       wss.close();
     }
-  });
+  }).share();
 }
 
 const socketServer = createRxServer({port: 8081});
@@ -73,11 +78,20 @@ const connections = socketServer.map(createRxSocket);
 
 let messageEvents$ = connections.flatMap(connection => connection.map(message => ({connection, message})));
 
-messageEvents$
-  .subscribe(({connection, message:{symbol}}:any) => {
-    connection.next(JSON.stringify({
-      symbol,
-      price: Math.random() * 100,
-      timestamp: Date.now()
-    }));
-  });
+let [subs, unsubs] = messageEvents$.partition(({message:{type}}:any) => type === 'sub');
+
+
+
+subs.subscribe(({connection, message:{symbol}}:any) => {
+  const source = Observable.interval(500).map(() => ({
+    symbol,
+    price: Math.random() * 100,
+    timestamp: Date.now()
+  }));
+  connection.streams = connection.streams || {};
+  connection.streams[symbol] = source.subscribe(connection);
+});
+  
+unsubs.subscribe(({ connection, message:{symbol}}:any) => {
+  connection.streams && connection.streams[symbol].unsubscribe();
+});

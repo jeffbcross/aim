@@ -7,11 +7,13 @@ import {
   provide,
   Component,
   FORM_BINDINGS,
+  CORE_DIRECTIVES,
   View
 } from 'angular2/angular2';
 import {HTTP_BINDINGS} from 'angular2/http';
 import {TypeAhead} from './components/typeahead/typeahead';
 import {TickerService} from './services/TickerService';
+import {RxPipe} from './services/rx-pipe/rx-pipe';
 
 // Not used yet
 var styles = require("!css!sass!./app.scss");
@@ -24,13 +26,34 @@ var tickerService = new TickerService('ws://localhost:8081');
 @View({
   template: `
     <h1>Angular Investment Manager</h1>
-    <typeahead></typeahead>
+    <typeahead (selected)="onSelect($event)"></typeahead>
+    <li *ng-for="#ticker of tickers">
+      {{ (ticker.ticker | rx)?.price }}
+      <button (click)="removeTicker(ticker.symbol)"> x </button>
+    
+    </li>
   `,
-  directives: [TypeAhead]
+  directives: [TypeAhead, CORE_DIRECTIVES],
+  pipes: [RxPipe]
 })
 class AimApp {
+  tickers = [];
   constructor() {
-    tickerService.getTicker('acg').subscribe(val => console.log('ticker update', val));
+    //tickerService.getTicker('acg').subscribe(val => console.log('ticker update', val));
+  }
+  onSelect({symbol}){
+    const tickers = this.tickers;
+    if(tickers.find(x => x.symbol === symbol)) {
+      return;
+    }
+    tickers.push({ symbol, ticker: tickerService.getTicker(symbol) });
+  }
+  removeTicker(symbol){
+    const tickers = this.tickers;
+    const index = tickers.findIndex(x => x.symbol === symbol);
+    if(index !== -1) {
+      tickers.splice(index, 1);
+    }
   }
 }
 
