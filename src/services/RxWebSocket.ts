@@ -16,7 +16,7 @@ export class RxWebSocket {
   selector(e: MessageEvent) {
     return JSON.parse(e.data);
   }
-  
+
   constructor(private url: string, private WebSocketCtor: { new(url:string): WebSocket } = WebSocket) {
   }
 
@@ -67,10 +67,11 @@ export class RxWebSocket {
   }
 
   send(message: any) {
-    if(this.socket) {
-      this.socket.send(message);
+    const data = typeof message === 'string' ? message : JSON.stringify(message);
+    if(this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.socket.send(data);
     } else {
-      this.messageQueue.push(message);
+      this.messageQueue.push(data);
     }
   }
 
@@ -79,10 +80,10 @@ export class RxWebSocket {
       this._in = {
         next: (message: any) => {
           const data = typeof message === 'string' ? message : JSON.stringify(message);
-          if(!this.socket) {
-            this.messageQueue.push(message);
-          } else {
+          if(this.socket && this.socket.readyState === WebSocket.OPEN) {
             this.socket.send(message);
+          } else {
+            this.messageQueue.push(message);
           }
         },
         error: (err: any)  => {

@@ -45,32 +45,39 @@ var server = app.listen(3000, function () {
   console.log('Stock Server app listening at http://%s:%s', host, port);
 });
 
-// //creates a new server socket Subject
-// const createRxSocket = (connection) => {
-//   let messages = Observable.fromEvent(connection, 'message', null);
-//   let messageObserver:any = {
-//     next(message){
-//       connection.send(message);
-//     }
-//   }
-//   return Subject.create(messages, messageObserver);
-// }
+//creates a new server socket Subject
+const createRxSocket = (connection) => {
+  let messages = Observable.fromEvent(connection, 'message', (message) => JSON.parse(message));
+  let messageObserver:any = {
+    next(message){
+      connection.send(message);
+    }
+  }
+  return Subject.create(messages, messageObserver);
+}
 
-// //creates an instance of the websocket server;
-// const createRxServer = (options) => {
-//   return new Observable(serverObserver => {
-//     console.info('started server...');
-//     let wss = new Server(options);
-//     wss.on('connection', connection => serverObserver.next(connection));
-//     return () => {
-//       wss.close();
-//     }
-//   });
-// }
+//creates an instance of the websocket server;
+const createRxServer = (options) => {
+  return new Observable(serverObserver => {
+    console.info('started server...');
+    let wss = new Server(options);
+    wss.on('connection', connection => serverObserver.next(connection));
+    return () => {
+      wss.close();
+    }
+  });
+}
 
-// const server = createRxServer({port: 8081});
-// const connections = server.map(createRxSocket);
+const socketServer = createRxServer({port: 8081});
+const connections = socketServer.map(createRxSocket);
 
-// let messageEvents$ = connections.flatMap(connection => connection.map(message => ({connection, message})));
+let messageEvents$ = connections.flatMap(connection => connection.map(message => ({connection, message})));
 
-// messageEvents$.subscribe(message => console.log('message', message))
+messageEvents$
+  .subscribe(({connection, message:{symbol}}:any) => {
+    connection.next(JSON.stringify({
+      symbol,
+      price: Math.random() * 100,
+      timestamp: Date.now()
+    }));
+  });

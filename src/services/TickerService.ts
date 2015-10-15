@@ -9,9 +9,9 @@ export enum ConnectionStates {
 }
 
 export interface TickerMessage {
-  id: string,
-  value: number,
-  dt: number
+  symbol: string,
+  price: number,
+  timestamp: number
 }
 
 export class TickerService {
@@ -31,17 +31,17 @@ export class TickerService {
     }
   }
 
-  getTicker(id: string): Observable<TickerMessage> {
+  getTicker(symbol: string): Observable<TickerMessage> {
     const socket = this.socket;
 
     return Observable.create(subscriber => {
-      const msgSub = socket.out.filter(d => d.id === id)
+      const msgSub = socket.out.filter(d => d.symbol === symbol)
         .subscribe(subscriber);
 
-      socket.send({ id, type: 'sub' });
+      socket.send({ symbol, type: 'sub' });
 
       return () => {
-        socket.send({ id, type: 'unsub' });
+        socket.send({ symbol, type: 'unsub' });
         msgSub.unsubscribe();
       };
     })
