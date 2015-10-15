@@ -6,13 +6,12 @@ import {RxPipe} from '../../services/rx-pipe/rx-pipe';
 @Component({
   selector: 'typeahead',
   template: `
-    (Start by typing Go, then type Goo. URLs are hard-coded to go.json and goo.json, so other queries won't work)
     <form [ng-form-model]="form">
       <input #symbol ng-control="ticker" type="text" placeholder="ticker symbol">
     </form>
     <ul>
-      <li *ng-for="#ticker of tickers | rx">{{ticker.symbol}} ({{ticker.company_name}}
-        <button (click)="onSelect(ticker)">Toogl</button>
+      <li *ng-for="#tick of tickers | rx">{{tick.symbol}} ({{tick.company_name}}
+        <button (click)="onSelect(tick)">Toogl</button>
       </li>
     </ul>
   `,
@@ -22,7 +21,7 @@ import {RxPipe} from '../../services/rx-pipe/rx-pipe';
 })
 export class TypeAhead {
   @Output('selected') selected = new EventEmitter();
-  clear = new Subject();
+  clear = new EventEmitter();
   ticker = new Control();
   
   tickers: Observable<any[]>;
@@ -32,11 +31,12 @@ export class TypeAhead {
   constructor(http:Http) {
     this.tickers = Observable.from((<EventEmitter>this.ticker.valueChanges).toRx())
       .debounceTime(200)
+      .distinctUntilChanged() //HACK
       .switchMap(val => {
         console.log('val', val);
         return http.request(`http://localhost:3000/stocks?symbol=${val}`)
       }, (val:string, res:Response) => res.json())
-      .merge(this.clear.mapTo([]));
+      .merge(this.clear.toRx().mapTo([]));
   }
   onSelect(ticker){
     this.selected.next(ticker);

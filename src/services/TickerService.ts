@@ -1,4 +1,4 @@
-import { Observable, Subject } from '@reactivex/rxjs';
+import { Observable, Subject, BehaviorSubject } from '@reactivex/rxjs';
 import { RxWebSocket } from './RxWebSocket';
 
 export enum ConnectionStates {
@@ -16,7 +16,7 @@ export interface TickerMessage {
 
 export class TickerService {
   socket: RxWebSocket;
-  connectionState = new Subject<ConnectionStates>();
+  connectionState = new BehaviorSubject<ConnectionStates>(ConnectionStates.CONNECTING);
 
   constructor(url: string, RxWebSocketCtor: { new(url:string): RxWebSocket } = RxWebSocket) {
     let socket = this.socket = new RxWebSocketCtor(url);
@@ -28,6 +28,10 @@ export class TickerService {
 
     socket.willOpen = () => {
       connectionState.next(ConnectionStates.CONNECTING);
+    }
+    
+    socket.didClose = () => {
+      connectionState.next(ConnectionStates.CLOSED);
     }
   }
 
@@ -45,7 +49,7 @@ export class TickerService {
         msgSub.unsubscribe();
       };
     })
-    .retryWhen(errors => errors.switchLatest(err => {
+    .retryWhen(errors => errors.switchMap(err => {
       if(navigator.onLine) {
         return Observable.of(2).expand((delay, i) => {
           return Observable.of(100 + Math.pow(delay, i)).delay(delay);

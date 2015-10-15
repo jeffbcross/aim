@@ -26,6 +26,7 @@ var tickerService = new TickerService('ws://localhost:8081');
 @View({
   template: `
     <h1>Angular Investment Manager</h1>
+    <h2>Status: {{tickerService.connectionState | rx}}</h2>
     <typeahead (selected)="onSelect($event)"></typeahead>
     <li *ng-for="#ticker of tickers">
       {{ (ticker.ticker | rx)?.price }}
@@ -38,6 +39,7 @@ var tickerService = new TickerService('ws://localhost:8081');
 })
 class AimApp {
   tickers = [];
+  tickerService = tickerService;
   constructor() {
     //tickerService.getTicker('acg').subscribe(val => console.log('ticker update', val));
   }

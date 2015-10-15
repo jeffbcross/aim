@@ -12,6 +12,7 @@ export class RxWebSocket {
   messageQueue: string[] = [];
   didOpen: (e: Event) => void;
   willOpen: () => void;
+  didClose: (e?:any) => void;
 
   selector(e: MessageEvent) {
     return JSON.parse(e.data);
@@ -46,6 +47,9 @@ export class RxWebSocket {
         socket.onclose = (e) => {
           if(e.wasClean) {
             subscriber.complete();
+            if(this.didClose){
+              this.didClose(e);
+            }
           } else {
             subscriber.error(e);
           }
