@@ -11,3 +11,6 @@ npm run start_server
 ```
 
 Then open your favorite Chrome browser to [localhost:8080](http://localhost:8080).
+
+> (I manually edited npm-shrinkwrap to override the version of rxjs depended on by angular).
+- @jeffbcross 10/14/15

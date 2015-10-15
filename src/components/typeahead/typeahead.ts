@@ -23,11 +23,11 @@ export class TypeAhead {
   });
   constructor(http:Http) {
     Observable.from((<EventEmitter>this.ticker.valueChanges).toRx())
-      .debounce(200)
+      .debounceTime(200)
       .map(val => {
         return `${val}.json`
       })
-      .flatMap(url => http.request(url))
+      .switchMap(url => http.request(url))
       .map(res => res.json())
       .map(tickers => tickers.data)
       .subscribe(value => {
