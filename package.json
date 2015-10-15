@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "serve": "./node_modules/.bin/webpack-dev-server",
-    "postinstall": "./node_modules/.bin/tsd install",
     "build_server": "tsc server/stock_server.ts -m commonjs --outDir dist || true",
     "start_server": "npm run build_server && node dist/stock_server"
   },
