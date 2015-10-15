@@ -29,8 +29,9 @@ var tickerService = new TickerService('ws://localhost:8081');
     <h2>Status: {{tickerService.connectionState | rx}}</h2>
     <typeahead (selected)="onSelect($event)"></typeahead>
     <li *ng-for="#ticker of tickers">
-      {{ (ticker.ticker | rx)?.price }}
-      <button (click)="removeTicker(ticker.symbol)"> x </button>
+    <button (click)="removeTicker(ticker.symbol)"> x </button>
+      {{ticker.symbol}}: {{ (ticker.ticker | rx)?.price }}
+      
     
     </li>
   `,

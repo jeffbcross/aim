@@ -1,4 +1,4 @@
-import {Component, Control, EventEmitter, ControlGroup, FORM_DIRECTIVES, NgControl, NgFor, ChangeDetectionStrategy, Output} from 'angular2/angular2';
+import {Component, Control, EventEmitter, FORM_DIRECTIVES, NgControl, NgFor, ChangeDetectionStrategy, Output} from 'angular2/angular2';
 import {Http, Response} from 'angular2/http';
 import {Observable, Subject} from '@reactivex/rxjs';
 import {RxPipe} from '../../services/rx-pipe/rx-pipe';
@@ -6,12 +6,10 @@ import {RxPipe} from '../../services/rx-pipe/rx-pipe';
 @Component({
   selector: 'typeahead',
   template: `
-    <form [ng-form-model]="form">
-      <input #symbol ng-control="ticker" type="text" placeholder="ticker symbol">
-    </form>
+    <input #symbol [ng-form-control]="ticker" type="text" placeholder="ticker symbol">
     <ul>
       <li *ng-for="#tick of tickers | rx">{{tick.symbol}} ({{tick.company_name}}
-        <button (click)="onSelect(tick)">Toogl</button>
+        <button type="button" (click)="onSelect(tick)">Toogl</button>
       </li>
     </ul>
   `,
@@ -25,13 +23,11 @@ export class TypeAhead {
   ticker = new Control();
   
   tickers: Observable<any[]>;
-  form:ControlGroup = new ControlGroup({
-    ticker: this.ticker
-  });
   constructor(http:Http) {
     this.tickers = Observable.from((<EventEmitter>this.ticker.valueChanges).toRx())
       .debounceTime(200)
-      .distinctUntilChanged() //HACK
+      .do(() => console.log('tick'))
+      .distinctUntilChanged()
       .switchMap(val => {
         console.log('val', val);
         return http.request(`http://localhost:3000/stocks?symbol=${val}`)
