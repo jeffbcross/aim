@@ -2,14 +2,16 @@ import { Subject, Observable, Subscriber, Subscription } from '@reactivex/rxjs';
 
 export interface Observer<T> {
   next: (value: T) => void;
-  error: (error: any) => void;
-  complete: () => void;
+  error?: (error: any) => void;
+  complete?: () => void;
   isUnsubscribed?: boolean;
 }
 
 export class RxWebSocket {
   socket: WebSocket;
   messageQueue: string[] = [];
+  didOpen: (e: Event) => void;
+  willOpen: () => void;
 
   constructor(private url: string, private WebSocketCtor: { new(url:string): WebSocket } = WebSocket) {
   }
@@ -24,10 +26,17 @@ export class RxWebSocket {
   get out(): Observable<MessageEvent> {
     if(!this._out) {
       this._out = Observable.create(subscriber => {
+        if(this.willOpen) {
+          this.willOpen();
+        }
+
         let socket = this.socket = new this.WebSocketCtor(this.url);
 
-        socket.onopen = () => {
+        socket.onopen = (e) => {
           this.flushMessages();
+          if(this.didOpen) {
+            this.didOpen(e);
+          }
         };
 
         socket.onclose = (e) => {
@@ -50,21 +59,30 @@ export class RxWebSocket {
     return this._out;
   }
 
-  get in(): Observer<string> {
+  send(message: any) {
+    if(this.socket) {
+      this.socket.send(message);
+    } else {
+      this.messageQueue.push(message);
+    }
+  }
+  
+  get in(): Observer<any> {
     if(!this._in) {
       this._in = {
-        next(message: string) {
+        next: (message: any) => {
+          const data = typeof message === 'string' ? message : JSON.stringify(message);
           if(!this.socket) {
             this.messageQueue.push(message);
           } else {
             this.socket.send(message);
           }
         },
-        error(err: any) {
+        error: (err: any)  => {
           this.socket.close(3000, err);
           this.socket = null;
         },
-        complete() {
+        complete: () => {
           this.socket.close();
           this.socket = null;
         }
