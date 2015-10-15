@@ -13,6 +13,10 @@ export class RxWebSocket {
   didOpen: (e: Event) => void;
   willOpen: () => void;
 
+  selector(e: MessageEvent) {
+    return JSON.parse(e.data);
+  }
+  
   constructor(private url: string, private WebSocketCtor: { new(url:string): WebSocket } = WebSocket) {
   }
 
@@ -20,10 +24,10 @@ export class RxWebSocket {
     return new RxWebSocket(url, WebSocketCtor);
   }
 
-  _out: Observable<MessageEvent>;
-  _in: Observer<string>;
+  _out: Observable<any>;
+  _in: Observer<any>;
 
-  get out(): Observable<MessageEvent> {
+  get out(): Observable<any> {
     if(!this._out) {
       this._out = Observable.create(subscriber => {
         if(this.willOpen) {
@@ -49,6 +53,9 @@ export class RxWebSocket {
 
         socket.onerror = (e) => subscriber.error(e);
 
+        socket.onmessage = (e) => {
+          subscriber.next(this.selector(e))
+        }
         return () => {
           socket.close();
           this.socket = null;
@@ -66,7 +73,7 @@ export class RxWebSocket {
       this.messageQueue.push(message);
     }
   }
-  
+
   get in(): Observer<any> {
     if(!this._in) {
       this._in = {
