@@ -6,8 +6,10 @@ import {
   bootstrap,
   provide,
   Component,
+  FORM_BINDINGS,
   View
 } from 'angular2/angular2';
+import {TypeAhead} from './components/typeahead/typeahead';
 
 // Not used yet
 var styles = require("!css!sass!./app.scss");
@@ -18,14 +20,15 @@ var styles = require("!css!sass!./app.scss");
 @View({
   template: `
     <h1>Angular Investment Manager</h1>
+    <typeahead></typeahead>
   `,
-  directives: []
+  directives: [TypeAhead]
 })
 class AimApp {
   constructor() {
-
   }
 }
 
 bootstrap(AimApp, [
+  FORM_BINDINGS
 ]);
