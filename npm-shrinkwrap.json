@@ -7,6 +7,11 @@
       "from": "@reactivex/rxjs@>=5.0.0-alpha.4 <6.0.0",
       "resolved": "https://registry.npmjs.org/@reactivex/rxjs/-/rxjs-5.0.0-alpha.4.tgz"
     },
+    "cors": {
+      "version": "2.7.1",
+      "from": "cors@2.7.1",
+      "resolved": "https://registry.npmjs.org/cors/-/cors-2.7.1.tgz"
+    },
     "angular2": {
       "version": "2.0.0-alpha.42",
       "from": "angular2@>=2.0.0-alpha.42 <3.0.0",

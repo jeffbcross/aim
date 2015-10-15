@@ -120,13 +120,8 @@ export class RxPipe implements PipeTransform, PipeOnDestroy {
 
   /** @internal */
   _updateLatestValue(async: any, value: Object) {
-    debugger
-    console.log('new value!', value);
     if (async === this._obj) {
-      console.log('async === this._obj', value);
       this._latestValue = value;
-      //HACK!!!!
-      setTimeout(_ => {}, 0);
       this._ref.markForCheck();
     }
   }

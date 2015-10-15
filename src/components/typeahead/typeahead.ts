@@ -1,6 +1,7 @@
-import {Component, Control, EventEmitter, ControlGroup, FORM_DIRECTIVES, NgControl, NgFor} from 'angular2/angular2';
-import {Http} from 'angular2/http';
+import {Component, Control, EventEmitter, ControlGroup, FORM_DIRECTIVES, NgControl, NgFor, ChangeDetectionStrategy} from 'angular2/angular2';
+import {Http, Response} from 'angular2/http';
 import {Observable} from '@reactivex/rxjs';
+import {RxPipe} from '../../services/rx-pipe/rx-pipe';
 
 @Component({
   selector: 'typeahead',
@@ -10,28 +11,25 @@ import {Observable} from '@reactivex/rxjs';
       <input #symbol ng-control="ticker" type="text" placeholder="ticker symbol">
     </form>
     <ul>
-      <li *ng-for="#ticker of tickers">{{ticker}}</li>
+      <li *ng-for="#ticker of tickers | rx">{{ticker.symbol}} ({{ticker.company_name}}</li>
     </ul>
   `,
-  directives: [FORM_DIRECTIVES, NgFor]
+  directives: [FORM_DIRECTIVES, NgFor],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  pipes: [RxPipe]
 })
 export class TypeAhead {
   ticker = new Control();
-  tickers: string[];
+  tickers: Observable<any[]>;
   form:ControlGroup = new ControlGroup({
     ticker: this.ticker
   });
   constructor(http:Http) {
-    Observable.from((<EventEmitter>this.ticker.valueChanges).toRx())
+    this.tickers = Observable.from((<EventEmitter>this.ticker.valueChanges).toRx())
       .debounceTime(200)
-      .map(val => {
-        return `${val}.json`
-      })
-      .switchMap(url => http.request(url))
-      .map(res => res.json())
-      .map(tickers => tickers.data)
-      .subscribe(value => {
-        this.tickers = value;
-      });
+      .switchMap(val => {
+        console.log('val', val);
+        return http.request(`http://localhost:3000/stocks?symbol=${val}`)
+      }, (val:string, res:Response) => res.json());
   }
 }

@@ -5,7 +5,10 @@ import * as express from 'express';
 import * as fs from 'fs';
 import 'es6-shim';
 
+var cors = require('cors');
+
 var app = express();
+app.use(cors());
 
 let stocks = require('../data/nyse-listed.json').map(stock => {
   return {
