@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "serve": "./node_modules/.bin/webpack-dev-server",
-    "build_server": "tsc server/chat_server.ts -m commonjs --outDir dist || true",
-    "start_server": "npm run build_server && node dist/chat_server",
-    "postinstall": "./node_modules/.bin/tsd install"
+    "postinstall": "./node_modules/.bin/tsd install",
+    "build_server": "tsc server/stock_server.ts -m commonjs --outDir dist || true",
+    "start_server": "npm run build_server && node dist/stock_server"
   },
   "repository": {
     "type": "git",
@@ -34,9 +34,13 @@
   "dependencies": {
     "@reactivex/rxjs": "^5.0.0-alpha.2",
     "angular2": "^2.0.0-alpha.42",
+<<<<<<< HEAD
     "firebase": "^2.3.1",
+=======
+    "express": "^4.13.3",
+>>>>>>> fix(server): pivot to stocks.
     "reflect-metadata": "^0.1.2",
-    "zone.js": "^0.5.8",
-    "ws": "^0.8.0"
+    "ws": "^0.8.0",
+    "zone.js": "^0.5.8"
   }
 }
