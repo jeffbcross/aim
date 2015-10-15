@@ -9,6 +9,7 @@ import {
   FORM_BINDINGS,
   View
 } from 'angular2/angular2';
+import {HTTP_BINDINGS} from 'angular2/http';
 import {TypeAhead} from './components/typeahead/typeahead';
 
 // Not used yet
@@ -30,5 +31,6 @@ class AimApp {
 }
 
 bootstrap(AimApp, [
-  FORM_BINDINGS
+  FORM_BINDINGS,
+  HTTP_BINDINGS
 ]);

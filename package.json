@@ -34,11 +34,7 @@
   "dependencies": {
     "@reactivex/rxjs": "^5.0.0-alpha.4",
     "angular2": "^2.0.0-alpha.42",
-<<<<<<< HEAD
-    "firebase": "^2.3.1",
-=======
     "express": "^4.13.3",
->>>>>>> fix(server): pivot to stocks.
     "reflect-metadata": "^0.1.2",
     "ws": "^0.8.0",
     "zone.js": "^0.5.8"
