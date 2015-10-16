@@ -73,3 +73,34 @@ export class TickerService {
     .share();
   }
 }
+
+interface Tick {
+  price: number;
+  symbol: string;
+  timestamp: number;
+}
+
+export class Ticker {
+  prices: Observable<string>;
+
+  recentTicks: Observable<Tick[]>;
+
+  maxRecentTicks = 41;
+
+  constructor(public symbol: string, public ticks: Observable<Tick>) {
+    // take the tick prices and map them into an observable of something
+    // more readable.
+    this.prices = this.ticks;
+
+    // take each tick we're getting and scan it into an
+    // observable of arrays, where each array is a list of
+    // accumulated values
+    this.recentTicks = this.ticks.startWith([]).scan((acc, tick) => {
+      let result = acc.concat([tick]);
+      while(result.length > this.maxRecentTicks) {
+        result.shift();
+      }
+      return result;
+    })
+  }
+}

@@ -80,8 +80,6 @@ let messageEvents$ = connections.flatMap(connection => connection.map(message =>
 
 let [subs, unsubs] = messageEvents$.partition(({message:{type}}:any) => type === 'sub');
 
-
-
 subs.subscribe(({connection, message:{symbol}}:any) => {
   const source = Observable.interval(500).map(() => ({
     symbol,

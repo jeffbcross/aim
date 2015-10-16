@@ -1,4 +1,5 @@
 declare var require:(s:string)=>any;
+declare var d3:any;
 
 require('reflect-metadata');
 import 'zone.js';
@@ -13,7 +14,8 @@ import {
 } from 'angular2/angular2';
 import {HTTP_BINDINGS} from 'angular2/http';
 import {TypeAhead} from './components/typeahead/typeahead';
-import {ConnectionStates, TickerService} from './services/TickerService';
+import {ConnectionStates, TickerService, Ticker} from './services/TickerService';
+import {StockGraph} from './components/graph/graph.ts';
 import {RxPipe} from './services/rx-pipe/rx-pipe';
 import {SOCKET_URL} from './config';
 import {RxWebSocket} from './services/RxWebSocket';
@@ -35,13 +37,12 @@ const statusLookup = [
     <h1>Angular Investment Manager</h1>
     <h2>Status: {{connectionStatus | rx}}</h2>
     <typeahead (selected)="onSelect($event)"></typeahead>
-    <li *ng-for="#ticker of tickers">
+    <div *ng-for="#ticker of tickers">
       <button (click)="removeTicker(ticker.symbol)"> x </button>
-      {{ticker.symbol}}: {{(ticker.prices | rx: 'prices')}}
-      <div>{{ (ticker.recentTicks | rx) | json }}</div>
-    </li>
+      <stock-graph [ticker]="ticker"></stock-graph>
+    </div>
   `,
-  directives: [TypeAhead, CORE_DIRECTIVES],
+  directives: [TypeAhead, StockGraph, CORE_DIRECTIVES],
   pipes: [RxPipe]
 })
 class AimApp {
@@ -70,37 +71,6 @@ class AimApp {
     if(index !== -1) {
       tickers.splice(index, 1);
     }
-  }
-}
-
-interface Tick {
-  price: number;
-  symbol: string;
-  timestamp: number;
-}
-
-export class Ticker {
-  prices: Observable<string>;
-
-  recentTicks: Observable<Tick[]>;
-
-  maxRecentTicks = 40;
-
-  constructor(public symbol: string, public ticks: Observable<Tick>) {
-    // take the tick prices and map them into an observable of something
-    // more readable.
-    this.prices = this.ticks.map((x: Tick) => x.price.toFixed(2));
-
-    // take each tick we're getting and scan it into an
-    // observable of arrays, where each array is a list of
-    // accumulated values
-    this.recentTicks = this.ticks.scan((acc, tick) => {
-      let result = [].concat(acc, tick);
-      while(result.length > this.maxRecentTicks) {
-        result.shift();
-      }
-      return result;
-    })
   }
 }
 
