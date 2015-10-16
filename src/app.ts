@@ -16,7 +16,7 @@ import {TypeAhead} from './components/typeahead/typeahead';
 import {ConnectionStates, TickerService} from './services/TickerService';
 import {RxPipe} from './services/rx-pipe/rx-pipe';
 import {SOCKET_URL} from './config';
-
+import {RxWebSocket} from './services/RxWebSocket';
 
 // Not used yet
 var styles = require("!css!sass!./app.scss");
@@ -108,5 +108,8 @@ bootstrap(AimApp, [
   FORM_BINDINGS,
   HTTP_BINDINGS,
   TickerService,
-  provide(SOCKET_URL, {useValue: SOCKET_URL})
+  provide(SOCKET_URL, {useValue: SOCKET_URL}),
+  provide(RxWebSocket, {useFactory: (url:string) => {
+    return new RxWebSocket(url, WebSocket);
+  }, deps: [SOCKET_URL]})
 ]);

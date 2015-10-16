@@ -1,4 +1,4 @@
-import {Inject} from 'angular2/angular2';
+import {Inject, Injectable} from 'angular2/angular2';
 import { Observable, Subject, BehaviorSubject } from '@reactivex/rxjs';
 import { RxWebSocket } from './RxWebSocket';
 import { SOCKET_URL } from '../config';
@@ -16,15 +16,13 @@ export interface TickerMessage {
   timestamp: number
 }
 
+@Injectable()
 export class TickerService {
-  socket: RxWebSocket;
-
   // connection state is a behavior subject, so anyone that
   // subscribes to it can see the most recent value it's emitted.
   connectionState = new BehaviorSubject<ConnectionStates>(ConnectionStates.CONNECTING);
 
-  constructor(@Inject(SOCKET_URL) url: string) {
-    let socket = this.socket = new RxWebSocket(url);
+  constructor(@Inject(SOCKET_URL) url: string, public socket:RxWebSocket) {
     const connectionState = this.connectionState;
 
     // subscribe to events from our RxWebSocket to update connection status
