@@ -21,15 +21,13 @@ export class TypeAhead {
   @Output('selected') selected = new EventEmitter();
   clear = new EventEmitter();
   ticker = new Control();
-  
+
   tickers: Observable<any[]>;
   constructor(http:Http) {
     this.tickers = Observable.from((<EventEmitter>this.ticker.valueChanges).toRx())
       .debounceTime(200)
-      .do(() => console.log('tick'))
       .distinctUntilChanged()
       .switchMap(val => {
-        console.log('val', val);
         return http.request(`http://localhost:3000/stocks?symbol=${val}`)
       }, (val:string, res:Response) => res.json())
       .merge(this.clear.toRx().mapTo([]));

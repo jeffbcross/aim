@@ -2,6 +2,7 @@ declare var require:(s:string)=>any;
 
 require('reflect-metadata');
 import 'zone.js';
+import { Observable } from '@reactivex/rxjs';
 import {
   bootstrap,
   provide,
@@ -30,8 +31,8 @@ var tickerService = new TickerService('ws://localhost:8081');
     <typeahead (selected)="onSelect($event)"></typeahead>
     <li *ng-for="#ticker of tickers">
       <button (click)="removeTicker(ticker.symbol)"> x </button>
-      {{ticker.symbol}}: {{(ticker.prices | rx)}}
-      <div>{{ (ticker.recentTicks | rx) }}</div>
+      {{ticker.symbol}}: {{(ticker.prices | rx: 'prices')}}
+      <div>{{ (ticker.recentTicks | rx) | json }}</div>
     </li>
   `,
   directives: [TypeAhead, CORE_DIRECTIVES],
@@ -43,7 +44,6 @@ class AimApp {
   tickerService = tickerService;
 
   constructor() {
-    //tickerService.getTicker('acg').subscribe(val => console.log('ticker update', val));
   }
 
   onSelect({symbol}){
@@ -65,23 +65,29 @@ class AimApp {
   }
 }
 
-class Ticker {
-  constructor(public symbol: string, public ticks: Observable<number>) {
+interface Tick {
+  price: number;
+  symbol: string;
+  timestamp: number;
+}
 
-  }
+export class Ticker {
+  prices: Observable<string>;
 
-  get prices() {
-    return this.ticks.map(x => x.price.toFixed(2)).do(console.log.bind(console));
-  }
+  recentTicks: Observable<Tick[]>;
 
-  get recentTicks() {
-    return this.ticks.scan((acc, tick) => {
-      const result = acc.concat([tick]);
-      while(result.length > 40) {
+  maxRecentTicks = 40;
+
+  constructor(public symbol: string, public ticks: Observable<Tick>) {
+    this.prices = this.ticks.map((x: Tick) => x.price.toFixed(2));
+
+    this.recentTicks = this.ticks.scan((acc, tick) => {
+      let result = [].concat(acc, tick);
+      while(result.length > this.maxRecentTicks) {
         result.shift();
       }
       return result;
-    }, []);
+    })
   }
 }
 
