@@ -1,5 +1,7 @@
+import {Inject} from 'angular2/angular2';
 import { Observable, Subject, BehaviorSubject } from '@reactivex/rxjs';
 import { RxWebSocket } from './RxWebSocket';
+import { SOCKET_URL } from '../config';
 
 export enum ConnectionStates {
   CONNECTING,
@@ -21,8 +23,8 @@ export class TickerService {
   // subscribes to it can see the most recent value it's emitted.
   connectionState = new BehaviorSubject<ConnectionStates>(ConnectionStates.CONNECTING);
 
-  constructor(url: string, RxWebSocketCtor: { new(url:string): RxWebSocket } = RxWebSocket) {
-    let socket = this.socket = new RxWebSocketCtor(url);
+  constructor(@Inject(SOCKET_URL) url: string) {
+    let socket = this.socket = new RxWebSocket(url);
     const connectionState = this.connectionState;
 
     // subscribe to events from our RxWebSocket to update connection status

@@ -2,7 +2,7 @@ declare var require:(s:string)=>any;
 
 require('reflect-metadata');
 import 'zone.js';
-import { Observable } from '@reactivex/rxjs';
+import { Observable, BehaviorSubject } from '@reactivex/rxjs';
 import {
   bootstrap,
   provide,
@@ -13,13 +13,13 @@ import {
 } from 'angular2/angular2';
 import {HTTP_BINDINGS} from 'angular2/http';
 import {TypeAhead} from './components/typeahead/typeahead';
-import {TickerService} from './services/TickerService';
+import {ConnectionStates, TickerService} from './services/TickerService';
 import {RxPipe} from './services/rx-pipe/rx-pipe';
+import {SOCKET_URL} from './config';
+
 
 // Not used yet
 var styles = require("!css!sass!./app.scss");
-
-var tickerService = new TickerService('ws://localhost:8081');
 
 const statusLookup = [
   'WAITING FOR CONNECTION',
@@ -46,13 +46,12 @@ const statusLookup = [
 })
 class AimApp {
   tickers: Ticker[] = [];
-
-  // map our observable of connection states to
-  // more readable status strings
-  connectionStatus = tickerService.connectionState
-    .map((state: number) => statusLookup[state])
-
-  constructor() {
+  connectionStatus:Observable<string>;
+  constructor(private _tickerService:TickerService) {
+    // map our observable of connection states to
+    // more readable status strings
+    this.connectionStatus = this._tickerService.connectionState
+      .map((state: number) => statusLookup[state])
   }
 
   onSelect({symbol}){
@@ -61,7 +60,7 @@ class AimApp {
       return;
     }
 
-    const ticks = tickerService.getTicker(symbol);
+    const ticks = this._tickerService.getTicker(symbol);
     tickers.push(new Ticker(symbol, ticks));
   }
 
@@ -107,5 +106,7 @@ export class Ticker {
 
 bootstrap(AimApp, [
   FORM_BINDINGS,
-  HTTP_BINDINGS
+  HTTP_BINDINGS,
+  TickerService,
+  provide(SOCKET_URL, {useValue: SOCKET_URL})
 ]);
