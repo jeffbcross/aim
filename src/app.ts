@@ -21,13 +21,19 @@ var styles = require("!css!sass!./app.scss");
 
 var tickerService = new TickerService('ws://localhost:8081');
 
+const statusLookup = [
+  'WAITING FOR CONNECTION',
+  'CONNECTED',
+  'CLOSED'
+];
+
 @Component({
   selector: 'aim-app'
 })
 @View({
   template: `
     <h1>Angular Investment Manager</h1>
-    <h2>Status: {{tickerService.connectionState | rx}}</h2>
+    <h2>Status: {{connectionStatus | rx}}</h2>
     <typeahead (selected)="onSelect($event)"></typeahead>
     <li *ng-for="#ticker of tickers">
       <button (click)="removeTicker(ticker.symbol)"> x </button>
@@ -41,7 +47,10 @@ var tickerService = new TickerService('ws://localhost:8081');
 class AimApp {
   tickers: Ticker[] = [];
 
-  tickerService = tickerService;
+  // map our observable of connection states to
+  // more readable status strings
+  connectionStatus = tickerService.connectionState
+    .map((state: number) => statusLookup[state])
 
   constructor() {
   }
@@ -79,8 +88,13 @@ export class Ticker {
   maxRecentTicks = 40;
 
   constructor(public symbol: string, public ticks: Observable<Tick>) {
+    // take the tick prices and map them into an observable of something
+    // more readable.
     this.prices = this.ticks.map((x: Tick) => x.price.toFixed(2));
 
+    // take each tick we're getting and scan it into an
+    // observable of arrays, where each array is a list of
+    // accumulated values
     this.recentTicks = this.ticks.scan((acc, tick) => {
       let result = [].concat(acc, tick);
       while(result.length > this.maxRecentTicks) {

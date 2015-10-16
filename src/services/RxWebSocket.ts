@@ -60,9 +60,11 @@ export class RxWebSocket {
         socket.onmessage = (e) => {
           subscriber.next(this.selector(e))
         }
+
         return () => {
           socket.close();
           this.socket = null;
+          this._out = null;
         };
       }).share();
     }
