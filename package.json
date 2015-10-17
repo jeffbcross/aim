@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@reactivex/rxjs": "^5.0.0-alpha.4",
-    "angular2": "^2.0.0-alpha.42",
+    "angular2": "^2.0.0-alpha.44",
     "cors": "^2.7.1",
     "d3": "^3.5.6",
     "express": "^4.13.3",
