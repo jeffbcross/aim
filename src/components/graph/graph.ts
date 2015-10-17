@@ -1,6 +1,7 @@
 var d3 = require('d3');
 import {Component, View, Input, ElementRef} from 'angular2/angular2';
 import {Ticker} from '../../services/TickerService';
+import { Subscription } from '@reactivex/rxjs';
 
 @Component({
   selector: 'stock-graph'
@@ -9,6 +10,8 @@ import {Ticker} from '../../services/TickerService';
   template: `<div id="chart"></div>`
 })
 export class StockGraph {
+  subscription: Subscription<any>;
+
   @Input('ticker') ticker:Ticker;
   values: any[] = new Array(40).fill({price: 50});
   path: any;
@@ -62,7 +65,7 @@ export class StockGraph {
     this.svg.append("g")
       .attr("class", "y axis")
       .call(d3.svg.axis().scale(this.y).orient("left"));
-      
+
     this.path = this.svg.append("g")
       .attr("clip-path", "url(#clip)")
       .append("path")
@@ -72,11 +75,11 @@ export class StockGraph {
       .style("stroke", "#00BCD4")
       .attr("d", this.line);
   }
-  
+
   render(latestValue){
-    
+
     this.values.push(latestValue)
-    
+
     this.path
       .attr("d", this.line)
       .attr("transform", null)
@@ -86,7 +89,15 @@ export class StockGraph {
       .attr("transform", "translate(" + this.x(-1) + ",0)")
       .each("end",() => this.values.shift());
   }
+
   onInit() {
-    this.ticker.ticks.sampleTime(500).subscribe(tick => this.render(tick));
+    this.subscription = this.ticker.ticks.sampleTime(500).subscribe(tick => this.render(tick));
+  }
+  
+  onDestroy() {
+    const subscription = this.subscription;
+    if(subscription) {
+      subscription.unsubscribe();
+    }
   }
 }
