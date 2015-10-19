@@ -37,7 +37,10 @@ export class TypeAhead {
       // (cancelling it), and subscribing to the newly returned on here.
       .switchMap(val => {
         return http.request(`http://localhost:3000/stocks?symbol=${val}`)
-      }, (val:string, res:Response) => res.json())
+      })
+      // Serialize the response into a plain ole' JavaScript object
+      // representation of the body.
+      .map((res:Response) => res.json())
       // send an empty array to tickers whenever clear emits by
       // merging in a the stream of clear events mapped to an
       // empty array.
