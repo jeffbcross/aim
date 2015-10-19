@@ -10,10 +10,12 @@ import {
   Component,
   FORM_BINDINGS,
   CORE_DIRECTIVES,
-  View
+  View,
+  ViewEncapsulation
 } from 'angular2/angular2';
 import {HTTP_BINDINGS} from 'angular2/http';
 import {TypeAhead} from './components/typeahead/typeahead';
+import {Navbar} from './components/navbar/nav';
 import {ConnectionStates, TickerService, Ticker} from './services/TickerService';
 import {StockGraph} from './components/graph/graph.ts';
 import {RxPipe} from './services/rx-pipe/rx-pipe';
@@ -21,7 +23,7 @@ import {SOCKET_URL} from './config';
 import {RxWebSocket} from './services/RxWebSocket';
 
 // Not used yet
-var styles = require("!css!sass!./app.scss");
+var styles = require("!css!sass!./app.css");
 
 const statusLookup = [
   'WAITING FOR CONNECTION',
@@ -34,15 +36,19 @@ const statusLookup = [
 })
 @View({
   template: `
-    <h1>Angular Investment Manager</h1>
-    <h2>Status: {{connectionStatus | rx}}</h2>
-    <typeahead (selected)="onSelect($event)"></typeahead>
-    <div *ng-for="#ticker of tickers">
-      <button (click)="removeTicker(ticker.symbol)"> x </button>
-      <stock-graph [ticker]="ticker"></stock-graph>
+    <navbar></navbar>
+    <div class="aim-app">
+      <div class="container">
+        <typeahead (selected)="onSelect($event)"></typeahead>
+      </div>
+      <div class="container" *ng-for="#ticker of tickers">
+        <button (click)="removeTicker(ticker.symbol)"> x </button>
+        <stock-graph [ticker]="ticker"></stock-graph>
+      </div>
     </div>
   `,
-  directives: [TypeAhead, StockGraph, CORE_DIRECTIVES],
+  encapsulation: ViewEncapsulation.None,
+  directives: [TypeAhead, StockGraph, Navbar, CORE_DIRECTIVES],
   pipes: [RxPipe]
 })
 class AimApp {
