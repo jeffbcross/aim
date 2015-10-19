@@ -14,10 +14,10 @@ import {TICKER_SEARCH_URL} from '../../config';
  * If the request fails once, the service will indiscriminately
  * retry the request with the same value.
  */
-export class TickerFetch {
+export class TickerLoader {
   constructor(private _http:Http) {}
 
-  fetch(val:string):Observable<any[]> {
+  load(val:string):Observable<any[]> {
     return this._http
       .request(`http://localhost:3000/stocks?symbol=${val}`)
       .retry(2)

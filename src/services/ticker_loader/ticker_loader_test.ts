@@ -8,11 +8,11 @@ import {
   Response,
   ResponseTypes
 } from 'angular2/http';
-import {TickerFetch} from './ticker_fetch';
+import {TickerLoader} from './ticker_loader';
 import {Observable} from '@reactivex/rxjs';
 
-describe('TickerFetch', () => {
-  var backend, baseResponseOptions, connection, injector, http, tickerFetch;
+describe('TickerLoader', () => {
+  var backend, baseResponseOptions, connection, injector, http, tickerLoader;
   beforeEach(() => {
     injector = Injector.resolveAndCreate([
       HTTP_BINDINGS,
@@ -24,12 +24,12 @@ describe('TickerFetch', () => {
         },
         deps: [MockBackend, BaseResponseOptions]
       }),
-      TickerFetch
+      TickerLoader
     ]);
     backend = injector.get(MockBackend);
     baseResponseOptions = injector.get(BaseResponseOptions);
     http = injector.get(Http);
-    tickerFetch = injector.get(TickerFetch);
+    tickerLoader = injector.get(TickerLoader);
 
     backend.connections.subscribe((c:MockConnection) => {
       var symbol:string[] =/.*stocks\?symbol=(.*)/.exec(c.request.url);
@@ -49,7 +49,7 @@ describe('TickerFetch', () => {
 
 
   it('should fetch and parse ticker suggestions', (done) => {
-    tickerFetch.fetch('a').subscribe(val => {
+    tickerLoader.load('a').subscribe(val => {
       expect(val[0].symbol).toBe('A');
       done();
     });
@@ -57,7 +57,7 @@ describe('TickerFetch', () => {
 
   xit('should retry if the request fails the first time', (done) => {
     // Test currently fails due to https://github.com/angular/angular/issues/4472
-    tickerFetch.fetch('a404').subscribe(done);
+    tickerLoader.load('a404').subscribe(done);
     connection.mockError('server failed');
     connection.mockRespond(new Response(baseResponseOptions.merge({
       body: [{
