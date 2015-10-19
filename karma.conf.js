@@ -3,6 +3,7 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['jasmine'],
     files: [
+      'node_modules/reflect-metadata/Reflect.js',
       'src/*_test.ts',
       'src/**/*_test.ts'
     ],
