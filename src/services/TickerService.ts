@@ -95,12 +95,12 @@ export class Ticker {
     // take each tick we're getting and scan it into an
     // observable of arrays, where each array is a list of
     // accumulated values
-    this.recentTicks = this.ticks.startWith([]).scan((acc, tick) => {
+    this.recentTicks = this.ticks.scan((acc, tick) => {
       let result = acc.concat([tick]);
       while(result.length > this.maxRecentTicks) {
         result.shift();
       }
       return result;
-    })
+    }, []);
   }
 }

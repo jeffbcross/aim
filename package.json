@@ -32,7 +32,7 @@
     "webpack-livereload-plugin": "^0.4.0"
   },
   "dependencies": {
-    "@reactivex/rxjs": "^5.0.0-alpha.4",
+    "@reactivex/rxjs": "^5.0.0-alpha.6",
     "angular2": "^2.0.0-alpha.44",
     "cors": "^2.7.1",
     "d3": "^3.5.6",
