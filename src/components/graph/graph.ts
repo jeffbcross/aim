@@ -7,7 +7,7 @@ import { Subscription } from '@reactivex/rxjs';
   selector: 'stock-graph'
 })
 @View({
-  template: `<div id="chart"></div>`
+  template: `<div class="chart"></div>`
 })
 export class StockGraph {
   subscription: Subscription<any>;
@@ -45,7 +45,7 @@ export class StockGraph {
       .x((d, i) => this.x(i))
       .y((d, i) => this.y(d.price));
 
-    this.svg = d3.select(el.nativeElement).append("svg")
+    this.svg = d3.select(el.nativeElement.querySelector('div.chart')).append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -93,8 +93,11 @@ export class StockGraph {
   onInit() {
     this.subscription = this.ticker.ticks.sampleTime(500).subscribe(tick => this.render(tick));
   }
-  
+
   onDestroy() {
+    // This is to work around Angular's View Caching.
+    // Actual solution to clearing custom DOM TBD
+    this.el.nativeElement.querySelector('div.chart').innerHTML = '';
     const subscription = this.subscription;
     if(subscription) {
       subscription.unsubscribe();
