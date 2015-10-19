@@ -1,3 +1,10 @@
+/**
+ * This implementation of RxPipe is copied from Angular 2's Async pipe, which doesn't
+ * yet support RxJS Observables. This is just a side-effect of transitioning Angular
+ * 2 to using the new RxJS library, and will go away shortly, making this pipe
+ * obsolete.
+ */
+
 import {
   AsyncPipe,
   ChangeDetectorRef,
