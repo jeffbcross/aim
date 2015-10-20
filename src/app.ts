@@ -45,6 +45,7 @@ const statusLookup = [
       <div class="container">
         <div class="row" *ng-for="#ticker of tickers">
           <button (click)="removeTicker(ticker.symbol)" class="col-md-2 btn btn-default">Close</button>
+          <h3 class="col-md-4">{{ticker.symbol}}</h3>
           <stock-graph [ticker]="ticker" class="col-md-8"></stock-graph>
         </div>
       </div>

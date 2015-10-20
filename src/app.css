@@ -1,3 +1,19 @@
-body {
-  padding-top: 50px;
+.typeahead-choice {
+  cursor: pointer;
+}
+
+.typeahead-choice:hover {
+  background: lightblue;
+}
+
+.navbar-text.CONNECTED {
+  color: lime;
+}
+
+.navbar-text.CLOSED {
+  color: red;
+}
+
+.navbar-text.RETRYING {
+  color: gold;
 }

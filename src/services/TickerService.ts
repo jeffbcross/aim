@@ -68,16 +68,13 @@ export class TickerService {
         msgSub.unsubscribe();
       };
     })
-    // now share it to make it "hot"
-    // ... that way we don't create the data producer for this more than once.
-    .share()
     // if this fails, let's retry. The retryWhen operator
     // gives us a stream of errors that we can transform
     // into an observable that notifies when we should retry the source
     .retryWhen(errors => errors.switchMap(err => {
       // update the connection state to let it know we're retrying
       this.connectionState.next(ConnectionStates.RETRYING);
-      
+
       if(navigator.onLine) {
         // if we have a network connection, try again in 3 seconds
         return Observable.timer(3000);
@@ -85,7 +82,10 @@ export class TickerService {
         // if we're offline, so wait for an online event.
         return Observable.fromEvent(window, 'online').take(1);
       }
-    }));
+    }))
+    // now share it to make it "hot"
+    // ... that way we don't create the data producer for this more than once.
+    .share();
   }
 }
 
