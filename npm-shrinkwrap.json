@@ -19,6 +19,11 @@
         }
       }
     },
+    "bootstrap": {
+      "version": "3.3.5",
+      "from": "bootstrap@>=3.3.5 <4.0.0",
+      "resolved": "https://registry.npmjs.org/bootstrap/-/bootstrap-3.3.5.tgz"
+    },
     "cors": {
       "version": "2.7.1",
       "from": "https://registry.npmjs.org/cors/-/cors-2.7.1.tgz",
