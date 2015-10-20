@@ -11,7 +11,7 @@ import {Component} from 'angular2/angular2';
         </div>
         <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav navbar-right">
-          <li><p class="navbar-text">{{status}}</p></li>
+          <li><p [class]="'navbar-text ' + status">{{status}}</p></li>
         </ul>
         </div><!--/.nav-collapse -->
       </div>

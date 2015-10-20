@@ -17,10 +17,9 @@ import {TickerLoader} from '../../services/ticker_loader/ticker_loader';
     </div>
     <table class="table table-striped">
       <tbody>
-        <tr *ng-for="#tick of tickers | rx">
+        <tr *ng-for="#tick of tickers | rx" class="typeahead-choice" (click)="onSelect(tick)">
           <td>{{tick.symbol}}</td>
           <td>{{tick.company_name}}</td>
-          <td><button type="button" class="btn btn-primary" (click)="onSelect(tick)">Toogl</button></td>
         </tr>
       </tbody>
     </table>
@@ -32,7 +31,6 @@ import {TickerLoader} from '../../services/ticker_loader/ticker_loader';
 })
 export class TypeAhead {
   @Output('selected') selected = new EventEmitter();
-  clear = new EventEmitter();
 
   searchText = new Control();
 
@@ -50,14 +48,10 @@ export class TypeAhead {
       // observable. That means unsubscribing from any previous HTTP request
       // (cancelling it), and subscribing to the newly returned on here.
       .switchMap((val:string) => tickerLoader.load(val))
-      // send an empty array to tickers whenever clear emits by
-      // merging in a the stream of clear events mapped to an
-      // empty array.
-      .merge(this.clear.toRx().mapTo([]));
   }
 
   onSelect(ticker){
     this.selected.next(ticker);
-    this.clear.next('');
+    this.searchText.updateValue('');
   }
 }
