@@ -28,7 +28,8 @@ var styles = require("!css!sass!./app.css");
 const statusLookup = [
   'WAITING FOR CONNECTION',
   'CONNECTED',
-  'CLOSED'
+  'CLOSED',
+  'RETRYING'
 ];
 
 @Component({

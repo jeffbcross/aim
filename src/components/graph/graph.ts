@@ -94,7 +94,7 @@ export class StockGraph {
       .style("stroke", "#00BCD4")
       .attr("d", this.line);
 
-    this.subscription = this.ticker.ticks.sampleTime(500).subscribe(tick => this.render(tick));
+    this.subscription = this.ticker.ticks.subscribe(tick => this.render(tick));
   }
 
   onDestroy() {

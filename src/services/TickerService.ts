@@ -70,7 +70,22 @@ export class TickerService {
     })
     // now share it to make it "hot"
     // ... that way we don't create the data producer for this more than once.
-    .share();
+    .share()
+    // if this fails, let's retry. The retryWhen operator
+    // gives us a stream of errors that we can transform
+    // into an observable that notifies when we should retry the source
+    .retryWhen(errors => errors.switchMap(err => {
+      // update the connection state to let it know we're retrying
+      this.connectionState.next(ConnectionStates.RETRYING);
+      
+      if(navigator.onLine) {
+        // if we have a network connection, try again in 3 seconds
+        return Observable.timer(3000);
+      } else {
+        // if we're offline, so wait for an online event.
+        return Observable.fromEvent(window, 'online').take(1);
+      }
+    }));
   }
 }
 
@@ -88,10 +103,6 @@ export class Ticker {
   maxRecentTicks = 41;
 
   constructor(public symbol: string, public ticks: Observable<Tick>) {
-    // take the tick prices and map them into an observable of something
-    // more readable.
-    this.prices = this.ticks;
-
     // take each tick we're getting and scan it into an
     // observable of arrays, where each array is a list of
     // accumulated values
