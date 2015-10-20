@@ -21,59 +21,7 @@ export class StockGraph {
   y: any;
 
   constructor(private el:ElementRef) {
-    let domNode = el.nativeElement;
-    let parentWidth = domNode.offsetWidth;
-    let parentHeight = domNode.offsetHeight;
 
-    let n = 40;
-
-    let margin = {top: 20, right: 20, bottom: 20, left: 20};
-    let width = 400
-    let height = 200;
-
-    //x scale
-    this.x = d3.scale.linear()
-      .domain([0, n - 1])
-      .range([0, width])
-
-     //y scale
-     this.y = d3.scale.linear()
-      .domain([0,100])
-      .range([height, 0]);
-
-    this.line = d3.svg.line()
-      .x((d, i) => this.x(i))
-      .y((d, i) => this.y(d.price));
-
-    this.svg = d3.select(el.nativeElement.querySelector('div.chart')).append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    this.svg.append("defs").append("clipPath")
-      .attr("id", "clip")
-      .append("rect")
-      .attr("width", width)
-      .attr("height", height);
-
-    this.svg.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + this.y(0) + ")")
-      .call(d3.svg.axis().scale(this.x).orient("bottom"))
-
-    this.svg.append("g")
-      .attr("class", "y axis")
-      .call(d3.svg.axis().scale(this.y).orient("left"));
-
-    this.path = this.svg.append("g")
-      .attr("clip-path", "url(#clip)")
-      .append("path")
-      .datum(this.values)
-      .style("fill", "none")
-      .style("stroke-width", "1.5px")
-      .style("stroke", "#00BCD4")
-      .attr("d", this.line);
   }
 
   render(latestValue){
@@ -91,6 +39,61 @@ export class StockGraph {
   }
 
   onInit() {
+    let n = 40;
+    let margin = {top: 20, right: 20, bottom: 20, left: 20};
+    let width = 700
+    let height = 200;
+
+    //x scale
+    this.x = d3.scale.linear()
+      .domain([0, n - 1])
+      .range([0, width])
+
+     //y scale
+     this.y = d3.scale.linear()
+      .domain([0,100])
+      .range([height, 0]);
+
+    this.line = d3.svg.line()
+      .x((d, i) => this.x(i))
+      .y((d, i) => this.y(d.price));
+
+    this.svg = d3.select(this.el.nativeElement.querySelector('div.chart')).append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    this.svg.append("defs").append("clipPath")
+      .attr("id", "clip")
+      .append("rect")
+      .attr("width", width)
+      .attr("height", height);
+
+    this.svg.append("g")
+      .style("fill", "none")
+      .style("stroke-width", "1.5px")
+      .style("stroke", "#000")
+      .style("font", "10px sans-serif")
+      .attr("transform", "translate(0," + this.y(0) + ")")
+      .call(d3.svg.axis().scale(this.x).orient("bottom"))
+
+    this.svg.append("g")
+      .style("fill", "none")
+      .style("stroke-width", "1.5px")
+      .style("font", "10px sans-serif")
+      .style("stroke", "#000")
+      .call(d3.svg.axis().scale(this.y).orient("left"));
+
+    this.path = this.svg.append("g")
+      .attr("clip-path", "url(#clip)")
+      .append("path")
+      .datum(this.values)
+      .style("fill", "none")
+      .style("stroke-width", "1.5px")
+      .style("stroke", "#00BCD4")
+      .attr("d", this.line);
+
     this.subscription = this.ticker.ticks.sampleTime(500).subscribe(tick => this.render(tick));
   }
 

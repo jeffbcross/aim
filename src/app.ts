@@ -36,14 +36,16 @@ const statusLookup = [
 })
 @View({
   template: `
-    <navbar></navbar>
+    <navbar [status]="connectionStatus | rx"></navbar>
     <div class="aim-app">
       <div class="container">
         <typeahead (selected)="onSelect($event)"></typeahead>
       </div>
-      <div class="container" *ng-for="#ticker of tickers">
-        <button (click)="removeTicker(ticker.symbol)"> x </button>
-        <stock-graph [ticker]="ticker"></stock-graph>
+      <div class="container">
+        <div class="row" *ng-for="#ticker of tickers">
+          <button (click)="removeTicker(ticker.symbol)" class="col-md-2 btn btn-default">Close</button>
+          <stock-graph [ticker]="ticker" class="col-md-8"></stock-graph>
+        </div>
       </div>
     </div>
   `,
